@@ -4,70 +4,55 @@ sliderCSS.href = "./style.css";
 document.querySelector("body").appendChild(sliderCSS)
 
 const sliderData = [];
-window.addEventListener("resize", () => {
+
+const sliderRender = (interval = false) => {
     sliderData.forEach(slider => {
         const { sliderElement, sliderIndex } = slider;
-        sliderElement.querySelector(".slider-imgs").style.right = (sliderIndex * sliderElement.querySelector(".slider-imgs .slider-img").scrollWidth) + "px";
-    });
-})
-
-const scrollInterval = setInterval(() => {
-    sliderData.filter(slider => slider.autoScroll).forEach(slider => {
-        const { sliderIndex, sliderElement } = slider;
-        slider.sliderIndex++;
-        const sliderImgs = sliderElement.querySelector(".slider-imgs");
-        if (sliderIndex === sliderElement.querySelectorAll(".slider-imgs img.slider-img").length) {
-            slider.sliderIndex = 0;
-            sliderImgs.style.right = 0;
+        if (slider.autoScroll && interval) {
+            if (sliderIndex === sliderElement.querySelectorAll(".slider-imgs img.slider-img").length - 1) slider.sliderIndex = 0;
+            else slider.sliderIndex++;
         }
-        else sliderImgs.style.right = (sliderElement.querySelector(".slider-imgs img.slider-img").scrollWidth * sliderIndex) + "px";
-        const sliderBtn = sliderElement.querySelector(`.slider-btns li.slider-btn[index="${sliderIndex}"]`);
-        Array.from(sliderElement.querySelectorAll(".slider-btns li.slider-btn")).filter(i => i.hasAttribute("selected") && !i.isEqualNode(sliderBtn)).forEach(i => {
-            i.removeAttribute("selected");
-        });
-        sliderBtn.setAttribute("selected", "");
+        sliderElement.querySelector(".slider-btns .slider-btn[selected]").removeAttribute("selected");
+        sliderElement.querySelector(`.slider-btns .slider-btn[index='${sliderIndex}']`).setAttribute("selected", "");
+        sliderElement.querySelector(".slider-imgs").style.right = sliderElement.querySelectorAll(".slider-imgs .slider-img").length === sliderIndex ? 0 : ((sliderElement.querySelector(".slider-imgs .slider-img").scrollWidth * sliderIndex) + "px");
     })
-}, 2000);
+}
+
+setInterval(() => sliderRender(true), 2000);
+window.addEventListener("resize", () => sliderRender());
 
 document.querySelectorAll(".slider").forEach(slider => {
-    const sliderImgCount = slider.querySelector(".slider-imgs img.slider-img").length;
-    slider.querySelector(".slider-imgs").style.width = `${sliderImgCount * 100}%`;
+    const sliderImages = slider.querySelectorAll(".slider-imgs img.slider-img");
+    sliderImages.forEach(sliderImg => sliderImg.style.width = `${100 / sliderImages.length}%`);
+    slider.querySelector(".slider-imgs").style.width = `${sliderImages.length * 100}%`;
     sliderData.push({
         "sliderElement": slider,
         "sliderIndex": 0,
         "intervalDelay": Number(slider.getAttribute("autoscroll")),
         "autoScroll": slider.hasAttribute("autoscroll")
     });
-    const sliderImages = slider.querySelectorAll(".slider-imgs img.slider-img");
-    for (let i = 0; i < sliderImages.length; i++) {
+    for (let i = 0; i < sliderImages.length; i++)
         slider.querySelector(".slider-btns").innerHTML += `<li index="${i}" ${i === 0 ? 'selected' : ''} class="slider-btn"></li>`;
-    }
-    sliderImages.forEach(sliderImg => {
-        sliderImg.addEventListener("click", () => {
-            sliderData.find(data => data.sliderElement === slider).sliderIndex++;
-            const sliderIndex = sliderData.find(data => data.sliderElement === slider).sliderIndex;
-            if (sliderIndex >= sliderImages.length) {
-                sliderData.find(data => data.sliderElement === slider).sliderIndex = 0;
-                slider.querySelector(".slider-imgs").style.right = 0;
-            } else slider.querySelector(".slider-imgs").style.right = (sliderImg.scrollWidth * sliderIndex) + "px";
-            const sliderBtn = slider.querySelector(`.slider-btns li.slider-btn[index="${sliderData.find(data => data.sliderElement === slider).sliderIndex}"]`);
-            Array.from(slider.querySelectorAll(".slider-btns li.slider-btn")).filter(i => i.hasAttribute("selected") && !i.isEqualNode(sliderBtn)).forEach(i => {
-                i.removeAttribute("selected");
-            });
-            sliderBtn.setAttribute("selected", "");
+
+    slider.querySelectorAll(".slider-actions > *").forEach(sliderActions => {
+        sliderActions.addEventListener("click", () => {
+            const { className } = sliderActions;
+            const activeSliderData = sliderData.find(data => data.sliderElement === slider);
+            if (className === 'prev') {
+                if (activeSliderData.sliderIndex === 0) activeSliderData.sliderIndex = slider.querySelectorAll(".slider-imgs .slider-img").length - 1;
+                else activeSliderData.sliderIndex--;
+            } else if (className === 'next') {
+                if (activeSliderData.sliderIndex === slider.querySelectorAll(".slider-imgs .slider-img").length - 1) activeSliderData.sliderIndex = 0;
+                else activeSliderData.sliderIndex++;
+            }
+            sliderRender();
         })
-    });
+    })
 
     slider.querySelectorAll(".slider-btns .slider-btn").forEach(sliderBtn => {
         sliderBtn.addEventListener("click", () => {
-            const sliderIndex = Number(sliderBtn.getAttribute("index"))
-            Array.from(slider.querySelectorAll(".slider-btns li.slider-btn")).filter(i => i.hasAttribute("selected") && !i.isEqualNode(sliderBtn)).forEach(i => {
-                i.removeAttribute("selected");
-            });
-            sliderBtn.setAttribute("selected", "");
-            sliderData.find(data => data.sliderElement === slider).sliderIndex = sliderIndex;
-            const sliderImgSWidth = slider.querySelector(".slider-imgs .slider-img").scrollWidth;
-            slider.querySelector(".slider-imgs").style.right = (sliderIndex * sliderImgSWidth) + "px";
+            sliderData.find(data => data.sliderElement === slider).sliderIndex = parseInt(sliderBtn.getAttribute("index"));
+            sliderRender();
         });
     });
 });
