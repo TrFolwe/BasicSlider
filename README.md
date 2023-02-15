@@ -1,16 +1,42 @@
-# Image Slider
+# Responsive Image Slider
 
- ![image](https://user-images.githubusercontent.com/78105136/218843182-6d0bf231-1fa9-4cda-9aed-898008d28a86.png)
+![image](https://user-images.githubusercontent.com/78105136/219118934-5e61f7ab-8190-480d-a744-db269ba1c997.png)
 
 # import
 ```html
 <script src="slider.js"></script>
 ```
 
-# Usage
+# Main code
 ```html
 <div class="slider">
         <ul class="slider-btns"></ul>
+        <div class="slider-imgs">
+            <div class="slider-element">
+                <img class="slider-img" src="..." alt="">
+                <div class="description">
+                    <h2>Title...</h2>
+                    <p>Description...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+```
+
+# For next/prev buttons
+```html
+<div class="slider">
+        <ul class="slider-btns"></ul>
+        <!-- Prev/Next --->
+        <div class="slider-actions">
+            <div class="prev">
+                <img src="./assets/prev-btn.png" alt="">
+            </div>
+            <div class="next">
+                <img src="./assets/next-btn.png" alt="">
+            </div>
+        </div>
+        <!----->
         <div class="slider-imgs">
             <img class="slider-img" src="..." alt="">
         </div>

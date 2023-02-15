@@ -43,14 +43,36 @@
     transition: right 500ms;
 }
 
+.slider-imgs .slider-element {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slider-imgs .slider-element .description {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: rgb(42, 42, 42, 0.6);
+    font-family: Arial, sans-serif;
+    color: white;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.slider-imgs .slider-element .description > * {
+    padding: 5px;
+}
+
 .slider-imgs img {
     object-fit: cover;
+    width: 100%;
     height: 100%;
 }
 
 .slider .slider-btns {
     position: absolute;
-    bottom: 5%;
+    top: 5%;
     left: 0;
     width: 100%;
     height: 25px;

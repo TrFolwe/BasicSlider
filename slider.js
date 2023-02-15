@@ -23,7 +23,7 @@ window.addEventListener("resize", () => sliderRender());
 
 document.querySelectorAll(".slider").forEach(slider => {
     const sliderImages = slider.querySelectorAll(".slider-imgs img.slider-img");
-    sliderImages.forEach(sliderImg => sliderImg.style.width = `${100 / sliderImages.length}%`);
+    slider.querySelectorAll(".slider-imgs .slider-element").forEach(sliderE => sliderE.style.width = `${100 / sliderImages.length}%`)
     slider.querySelector(".slider-imgs").style.width = `${sliderImages.length * 100}%`;
     sliderData.push({
         "sliderElement": slider,
